@@ -28,7 +28,7 @@ app.get('/',function(req,res){
 
 io.sockets.on('connection', function(socket){
 	var query = Chat.find({});
-	query.limit(8).exec(function(err, docs){
+	query.sort('-created').limit(8).exec(function(err, docs){
 		if(err) throw err;
 		console.log('sending old msg!');
 		socket.emit('load old msgs', docs);
@@ -52,8 +52,8 @@ io.sockets.on('connection', function(socket){
 	socket.on('send message', function(data, callback){
 		var msg = data.trim(); //trim isnt working
 		console.log('after trimming message is: ' +msg); //working
-		if(msg.substr(0,3)==='/w'){
-			 msg=msg.substr(3);
+		if(msg.substr(0,1)==='@'){ 
+			 msg=msg.substr(1); 
 			 var ind=msg.indexOf(' ');
 			 if (ind !== -1){
 				 var name= msg.substring(0, ind);

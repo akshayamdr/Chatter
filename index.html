@@ -39,7 +39,7 @@
 				<input type="submit"></input>
 			</form>
 		</div>
-		<div id="users"></div>
+		<div id="users" ></div>
 	</div>
 		
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -84,7 +84,7 @@
 			});
 			
 			socket.on('load old msgs', function(docs){
-				for(var i=0; i<docs.length; i++){
+				for(var i=docs.length-1; i>=0; i--){
 					displayMsg(docs[i]);
 				}
 			});
