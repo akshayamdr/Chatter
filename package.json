@@ -1,10 +1,12 @@
 {
-	"name":"chat",
-	"version":"0.0.1",
-	"private":"true",
-	"dependencies":{
-		"socket.io":"0.9.16",
-		"express":"3.2.6"
-	}
-	
+  "name": "chat",
+  "version": "0.0.1",
+  "private": "true",
+  "dependencies": {
+    "socket.io": "0.9.16",
+    "express": "3.2.6"
+  },
+  "devDependencies": {
+    "nodemon": "^1.10.2"
+  }
 }
