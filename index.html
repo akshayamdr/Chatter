@@ -4,14 +4,14 @@
 	<style>
 		#chat{
 			height:500px;
-		}	
+		}
 		#contentWrap{
 			display:none;
 		}
 		#chatWrap{
 			float: left;
 			border: 1px #000 solid;
-		}		
+		}
 		.error{
 			color:red;
 		 }
@@ -24,15 +24,15 @@
 <body>
 	<div id="nickWrap">
 		<p> Enter username: </p>
-		<p id="nickError"></p> 
+		<p id="nickError"></p>
 		<form id="setNick">
 			<input size="35" id="nickname"></input>
 			<input type="submit"></input>
-		</form> 
+		</form>
 	</div>
-	
+
 	<div id="contentWrap">
-		<div id="charWrap">	
+		<div id="charWrap">
 			<div id="chat"></div>
 			<form id="send-message">
 				<input size="35" id="message"></input>
@@ -41,8 +41,8 @@
 		</div>
 		<div id="users" ></div>
 	</div>
-		
-	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+	<script src="./jquery-3.1.0.min.js"></script></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 		jQuery(function($){
@@ -54,7 +54,7 @@
 			var $messageForm=$('#send-message');
 			var $messageBox=$('#message');
 			var $chat=$('#chat');
-			
+
 			$nickForm.submit(function(e){
 				e.preventDefault();
 				socket.emit('new user', $nickBox.val(), function(data){
@@ -63,7 +63,7 @@
 							$('#contentWrap').show();
 					} else{
 						$nickError.html('that username is already taken! Try another user name');
-					}	
+					}
 				});
 				$nickBox.val('');
 			});
@@ -74,7 +74,7 @@
 				}
 				$users.html(html);
 			});
-			
+
 			$messageForm.submit(function(e){
 				e.preventDefault();
 				socket.emit('send message', $messageBox.val(), function(data){
@@ -82,29 +82,29 @@
 				});
 				$messageBox.val('');
 			});
-			
+
 			socket.on('load old msgs', function(docs){
 				for(var i=docs.length-1; i>=0; i--){
 					displayMsg(docs[i]);
 				}
 			});
-			
+
 			socket.on('new message', function(data){
 				displayMsg(data);
 			});
-			
+
 			function displayMsg(data){
 			$chat.append('<span class="msg"><b>' + data.nick + ':</b>' + data.msg + "</span><br/>");
 			}
-			
+
 			socket.on('whisper', function(data){
 				$chat.append('<span class="whisper"><b>' + data.nick + ':</b>' + data.msg + "</span><br/>");
 			});
-			
+
 		});
-		
-		
-	
+
+
+
 	</script>
 </body>
 </html>
