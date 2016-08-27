@@ -1,3 +1,4 @@
+
 var express=require('express'),
 	app=express(),
 	server=require('http').createServer(app),
@@ -82,4 +83,3 @@ io.sockets.on('connection', function(socket){
 		delete users[socket.nickname];
 		updateNicknames();
 	});
-});  
