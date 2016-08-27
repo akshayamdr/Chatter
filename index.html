@@ -1,0 +1,206 @@
+<html>
+<head>
+	<title>Chatter</title>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+  </head>
+	<style>
+	body
+	{
+		height:100%;
+		margin:0px;
+		background-color:#fff;
+		color:black;
+	}
+		#banner
+		{
+			
+			text-align:left;
+			background-color:#8675F4;
+			
+		}
+		#chat
+		{
+			position:absolute;
+			top:150px;
+			left:200px;
+			height:400px;
+			width:800px;
+			border:1px solid blue;	
+			background-color:#fff;
+			border-radius:10px;	
+			text-align:left;	
+		}
+		#contentWrap
+		{
+			display:none;
+		}
+		#chatWrap
+		{
+			float: left;
+			border: 10px #000 solid;
+		}		
+		.error
+		{
+			color:red;
+		}
+		 .whisper
+		 {
+			color:gray;
+			font-style: italic;
+		 }
+		 #nickWrap
+		 {
+		 border:1px solid blue;
+			border-radius:10px;
+			margin: 100px;
+			padding:50px;
+			
+			
+		 }
+		 #send-message{
+			position:absolute;
+			left: 200px;
+			top:600;
+			align:center;
+			padding: 20px;
+			border:1px solid blue;
+			border-radius:10px;
+		 }
+		 #users{
+			text-align:center;
+			position:absolute;
+			top:150px;
+			left:1024px;
+			width: 200px;
+			height:100px;
+			background-color:white;
+			border:1px solid blue;
+			border-radius:10px;
+		 }
+		.in_sty
+		{
+			color:black;
+			
+			border-radius:5px;
+			border:2px solid #DCD8FE;
+		}
+		#chat-message
+		{
+		
+			position:absolute;
+			top: 110px;
+			left:200px;
+			font-size:30;
+		}
+		#user
+		{
+			position:absolute;
+			top:110px;
+			left:1080px;
+			font-size:30px;
+		}
+		#nickname{
+			border: 2px solid #DCD8FE
+			height: 15px;
+		}
+		#setNick{
+		padding: 5px;
+		}
+	</style>
+<body>
+	<div id="banner" class="jumbotron" height="40" style="background-color:#5D4CCB; padding:01px; color:#fff;" ><h1>Chatter</h1></div>
+	<div id="nickWrap">
+	<h1>Welcome to Chatter!</h1>
+		 <h2>Enter username: </h2>
+		<p id="nickError"></p> 
+		<form id="setNick">
+			<input size="35" placeholder="Username" height="25" id="nickname" class="in_sty" type="text"></input>
+			<input type="submit" class="btn btn-info" value="Submit"  ></input>
+		</form> 
+	</div>
+	
+	<div id="contentWrap">
+		<div id="charWrap">
+		<div id="chat-message"><center>Message Board</center></div>
+			<div id="chat"><br></div>
+				<footer>
+					<center>
+					<form id="send-message" >
+						<input size="108" id="message" placeholder="Type your message here." class="in_sty" height="25" type="text" ></input>
+						<input type="submit" 
+						class="btn btn-info" value="Send" style= "height:22"></input>
+					</form>
+					</center>
+				</footer>
+		</div>
+		<div id="user">Users</div>
+		<div id="users" >
+		</div>
+</div>
+		
+	<script src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		jQuery(function($){
+			var socket=io.connect();
+			var $nickForm=$('#setNick');
+			var $nickError=$('#nickError');
+			var $nickBox=$('#nickname');
+			var $users=$('#users');
+			var $messageForm=$('#send-message');
+			var $messageBox=$('#message');
+			var $chat=$('#chat');
+			
+			$nickForm.submit(function(e){
+				e.preventDefault();
+				socket.emit('new user', $nickBox.val(), function(data){
+					if(data){
+							$('#nickWrap').hide();
+							$('#contentWrap').show();
+					} else{
+						$nickError.html('that username is already taken! Try another user name');
+					}	
+				});
+				$nickBox.val('');
+			});
+			socket.on('usernames',function(data){
+				var html='';
+				for(var i=0;i<data.length;i++){
+					html+=data[i]+'<br/>'
+				}
+				$users.html(html);
+			});
+			
+			$messageForm.submit(function(e){
+				e.preventDefault();
+				socket.emit('send message', $messageBox.val(), function(data){
+					$chat.append('<span class="error">' + data+ "</span><br/>");
+				});
+				$messageBox.val('');
+			});
+			
+		socket.on('load old msgs', function(docs){
+				for(var i=docs.length-1; i>=0; i--){
+					displayMsg(docs[i]);
+				}
+			});
+			
+			socket.on('new message', function(data){
+				displayMsg(data);
+			});
+			
+			function displayMsg(data){
+			$chat.append('<span class="msg"><b>' + data.nick + ':</b>' + data.msg + "</span><br/>");
+			}
+			
+			socket.on('whisper', function(data){
+				$chat.append('<span class="whisper"><b>' + data.nick + ':</b>' + data.msg + "</span><br/>");
+			});
+			
+		});
+		
+		
+	
+	</script>
+</body>
+</html>
