@@ -83,3 +83,4 @@ io.sockets.on('connection', function(socket){
 		delete users[socket.nickname];
 		updateNicknames();
 	});
+});
